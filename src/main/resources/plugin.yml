@@ -1,0 +1,6 @@
+name: Gateways
+version: ${project.version}
+main: me.endergamingfilms.gateways.Gateways
+api-version: 1.16
+authors: [EnderGamingFilms]
+description: Use custom keys to open portal gateways
