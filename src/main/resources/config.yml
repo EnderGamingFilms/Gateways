@@ -1,0 +1,16 @@
+# ----------------------------------------------------------------
+# MySQL Storage - This is very helpful when storing player data that is constantly being acced.
+#   Currently MySQL storage will only be used to store player standing for "The Collector"
+# Disabled By Default
+# ----------------------------------------------------------------
+
+SelectionTool:
+    name: '&bSelection Tool'
+    type: 'STONE_HOE'
+    lore:
+        - '&dUse to select gateway bounds'
+        - ''
+        - '&7Right-click to set positions'
+
+# Debugging Settings
+Debug: false

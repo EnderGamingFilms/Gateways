@@ -1,0 +1,11 @@
+prefix: "&b&lGateways &7"
+no-permission:
+  message: "&cYou do not have permission for this command."
+  prefix: true
+non-player: "&4Only players can run this command."
+help:
+  header: "&9-------------------- &bGateways Help &9--------------------"
+  reload: "&6/gateways reload&f - &eReload all files"
+  create: "&6/gateways create &f[portalName] - &eGet gateway mapping tool"
+  remove: "&6/gateways remove &f[portalName] - &eDelete a gateway"
+  list: "&6/gateways list &f- &eGet a list of all gateways"

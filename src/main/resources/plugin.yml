@@ -1,6 +1,21 @@
 name: Gateways
 version: ${project.version}
 main: me.endergamingfilms.gateways.Gateways
-api-version: 1.16
-authors: [EnderGamingFilms]
+api-version: 1.15
+author: EnderGamingFilms
 description: Use custom keys to open portal gateways
+softdepend: [PlaceholderAPI, CMI]
+permissions:
+  gateways.reload:
+    default: op
+  gateways.command.create:
+    default: op
+  gateways.command.*:
+    default: op
+    children:
+      gateways.command.create: true
+  gateways.*:
+    default: op
+    children:
+      gateways.command.*: true
+      gateways.reload: true
