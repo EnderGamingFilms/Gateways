@@ -18,7 +18,6 @@ public class Responses {
     /** |-------------- Basic Responses --------------| */
     public String noPerms() {
         return plugin.messageUtils.getFormattedMessage("no-permission.message",
-                plugin.fileManager.getMessages(),
                 plugin.fileManager.getMessages().getBoolean("no-permission.prefix"));
     }
 
@@ -27,20 +26,71 @@ public class Responses {
     }
 
     public String nonPlayer() {
-        return plugin.messageUtils.getFormattedMessage("non-player", plugin.fileManager.getMessages());
+        return plugin.messageUtils.getFormattedMessage("non-player");
     }
 
-    public TextComponent listPortals() {
+    //------------------------------------------
+
+    /** |-------------- Gateway Responses --------------| */
+
+    public String gatewayWrongKey() {
+        return plugin.messageUtils.getFormattedMessage("gateway-invalid-key");
+    }
+
+    public String gatewayOpeningMessage(final String name) {
+        return plugin.messageUtils.getFormattedMessage("gateway-opening-soon", name);
+    }
+
+    public String gatewayOpened(final String name) {
+        return plugin.messageUtils.getFormattedMessage("gateway-opened", name);
+    }
+
+    public String gatewayClosed(final String name) {
+        return plugin.messageUtils.getFormattedMessage("gateway-closed", name);
+    }
+
+    public String gatewayAlreadyOpen() {
+        return plugin.messageUtils.getFormattedMessage("gateway-already-opened");
+    }
+
+    public String gatewayAlreadyClosed() {
+        return plugin.messageUtils.getFormattedMessage("gateway-already-closed");
+    }
+
+    public String gatewayExists() {
+        return plugin.messageUtils.getFormattedMessage("gateway-exists");
+    }
+
+    public String gatewayDoesNotExists() {
+        return plugin.messageUtils.getFormattedMessage("gateway-missing");
+    }
+
+    public String gatewayCreationTimeout() {
+        return plugin.messageUtils.getFormattedMessage("gateway-creation-timeout");
+    }
+
+    public String gatewayDeleted() {
+        return plugin.messageUtils.getFormattedMessage("gateway-deletion");
+    }
+
+
+    public TextComponent listGateways() {
         TextComponent message = new TextComponent();
-        message.addExtra(plugin.messageUtils.colorize("&9----- &bPortals &9-----") + NL);
+        message.addExtra(plugin.messageUtils.colorize("&9----- &bGateways &9-----") + NL);
         for (Map.Entry<String, Portal> entry : plugin.portalManager.getActivePortals().entrySet()) {
             Portal portal = entry.getValue();
             message.addExtra(plugin.messageUtils.colorize("&7 -> Portal Name: &b" + portal.getPortalName()) + NL);
+            message.addExtra(plugin.messageUtils.colorize("&7 -> Custom Name: &f" + portal.getCustomName()) + NL);
             message.addExtra(plugin.messageUtils.colorize("&7 -> World: &6" + portal.getWorld().getName()) + NL);
             message.addExtra(plugin.messageUtils.colorize("&7 -> KeyBlock:&d" +
                     " x=" + portal.getKeyBlockLocation().getBlockX() +
                     ", y=" + portal.getKeyBlockLocation().getBlockY() +
                     ", z=" + portal.getKeyBlockLocation().getBlockZ()) + NL);
+            message.addExtra(plugin.messageUtils.colorize("&7 -> Destination:&a" +
+                    " x=" + portal.getDestination().getBlockX() +
+                    ", y=" + portal.getDestination().getBlockY() +
+                    ", z=" + portal.getDestination().getBlockZ()) +
+                    " (world=" + portal.getDestination().getWorld().getName() + ")" + NL);
             message.addExtra(plugin.messageUtils.colorize("&7 -> Pos1:&e" +
                     " x=" + portal.getPos1().getBlockX() +
                     ", y=" + portal.getPos1().getBlockX() +
@@ -58,17 +108,17 @@ public class Responses {
 
     /** |-------------- Help/Usage Responses --------------| */
     public String getHelp(final String cmd) {
-        return plugin.messageUtils.getFormattedMessage("help." + cmd, plugin.fileManager.getMessages(), false);
+        return plugin.messageUtils.getFormattedMessage("help." + cmd, false);
     }
 
     public TextComponent getHelp(Player player) {
         TextComponent message = new TextComponent();
-        message.addExtra(plugin.messageUtils.getFormattedMessage("help.header", plugin.fileManager.getMessages(), false) + NL);
+        message.addExtra(plugin.messageUtils.getFormattedMessage("help.header", false) + NL);
         if (player.hasPermission("gateways.reload"))
             message.addExtra(getHelp("reload") + NL);
         if (player.hasPermission("gateways.command.create"))
             message.addExtra(getHelp("create") + NL);
-        if (player.hasPermission("gateways.command.set"))
+        if (player.hasPermission("gateways.command.remove"))
             message.addExtra(getHelp("remove") + NL);
         if (player.hasPermission("gateways.command.remove"))
             message.addExtra(getHelp("list") + NL);

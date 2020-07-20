@@ -30,23 +30,15 @@ public class GatewaysCommand extends BaseCommand {
         if (args[0].matches("rl|reload")) {
             plugin.cmdManager.reloadCmd.run(player);
         } else if (args[0].equalsIgnoreCase("create")) {
-            if (!player.hasPermission("gateways.command.create")) return false;
-            if (args.length < 2) {
-                plugin.messageUtils.send(player, plugin.respond.getHelp(args[0]));
-                return false;
-            }
-            plugin.portalManager.beginPortalCreation(player, args[1]);
+            plugin.cmdManager.createCmd.run(player, args);
         } else if (args[0].matches("rm|remove")) {
-            if (!player.hasPermission("gateways.command.create")) return false;
-            if (args.length < 2) {
-                plugin.messageUtils.send(player, plugin.respond.getHelp("remove"));
+            plugin.cmdManager.deleteCmd.run(player, args);
+        } else if (args[0].equalsIgnoreCase("list")) {
+            if (!player.hasPermission("gateways.command.list")) {
+                plugin.messageUtils.send(player, plugin.respond.noPerms());
                 return false;
             }
-            plugin.portalManager.getActivePortals().remove(args[1]);
-            if (plugin.cmiHook.portalModule.getPortals().containsKey(args[1]))
-                plugin.cmiHook.portalModule.removePortal(plugin.cmiHook.portalModule.getByName(args[1]));
-        } else if (args[0].equalsIgnoreCase("list")) {
-            plugin.messageUtils.send(player, plugin.respond.listPortals());
+            plugin.messageUtils.send(player, plugin.respond.listGateways());
         } else {
             plugin.messageUtils.send(player, plugin.respond.getHelp(player));
             return false;

@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.List;
 
 public class FileManager {
     public static final boolean BOOLEAN = false;
@@ -23,16 +24,11 @@ public class FileManager {
     /**
      * |-------------- Settings --------------|
      */
-    public int scalar;
-    public double tax;
-    public double multiplierCraft;
-    public double multiplierSmelt;
-    public double multiplierGrow;
-    public boolean collectorIsEnabled;
-    public double collectorDefTax;
-    public boolean collectorHasStanding;
-    public String[] blacklist;
+    public int defaultPortalOnTime;
     public boolean debug;
+    public String selectionToolName;
+    public String selectionToolType;
+    public List<String> selectionToolLore;
     //------------------------------------------
 
     /**
@@ -86,7 +82,11 @@ public class FileManager {
     }
 
     public void reloadSettings() {
-        this.debug = plugin.messageUtils.grabConfig("Debug", BOOLEAN);
+        this.selectionToolName = plugin.messageUtils.grabConfig("SelectionTool.name", STRING);
+        this.selectionToolType = plugin.messageUtils.grabConfig("SelectionTool.type", STRING);
+        this.selectionToolLore = (List<String>) plugin.messageUtils.grabConfig("SelectionTool.lore", LIST);
+        this.defaultPortalOnTime = plugin.messageUtils.grabConfig("default-open-time", INT);
+        this.debug = plugin.messageUtils.grabConfig("debug", BOOLEAN);
     }
     //------------------------------------------
 

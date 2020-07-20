@@ -1,8 +1,8 @@
 package me.endergamingfilms.gateways.gateway;
 
 import me.endergamingfilms.gateways.Gateways;
+import me.endergamingfilms.gateways.gateway.listeners.OnHotbarSwitch;
 import me.endergamingfilms.gateways.gateway.listeners.OnSelectionToolUse;
-import me.endergamingfilms.gateways.utils.FileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,20 +21,23 @@ public class SelectionHandler implements Listener {
     private final Gateways plugin;
     public final NamespacedKey key;
     private final Map<UUID, Portal> creationMap = new HashMap<>();
+    private final Map<UUID, Integer> creationTasks = new HashMap<>();
     private ItemStack selectionTool;
 
     public SelectionHandler(@NotNull final Gateways instance) {
         this.plugin = instance;
         this.key = new NamespacedKey(instance, "selectionTool");
-
-        instance.getServer().getPluginManager().registerEvents(new OnSelectionToolUse(instance), instance);
+        // Setup Selection Tool Item
         makeSelectionTool();
+        // Register SelectionToolListeners
+        instance.getServer().getPluginManager().registerEvents(new OnSelectionToolUse(instance), instance);
+        instance.getServer().getPluginManager().registerEvents(new OnHotbarSwitch(instance), instance);
     }
 
     public void makeSelectionTool() {
-        Material toolMat = Material.getMaterial(plugin.messageUtils.grabConfig("SelectionTool.type", FileManager.STRING));
-        String matName = plugin.messageUtils.grabConfig("SelectionTool.name", FileManager.STRING);
-        List<String> matLore = (List<String>) plugin.messageUtils.grabConfig("SelectionTool.lore", FileManager.LIST);
+        Material toolMat = Material.getMaterial(plugin.fileManager.selectionToolType);
+        String matName = plugin.fileManager.selectionToolName;
+        List<String> matLore = plugin.fileManager.selectionToolLore;
 
         if (!matLore.isEmpty()) {
             List<String> colorized = new ArrayList<>();
@@ -66,24 +69,35 @@ public class SelectionHandler implements Listener {
         player.getInventory().addItem(selectionTool);
     }
 
-    public void startSelection(Player player, final String portal) {
-        creationMap.put(player.getUniqueId(), new Portal(portal, player.getWorld()));
+    public void startSelection(Player player, final String[] args) {
+        int cancellationTime = 60;
+        Portal portal = new Portal(args[1], player.getWorld());
+        portal.setCustomName(args[2]);
+        creationMap.put(player.getUniqueId(), portal);
         giveSelectionTool(player);
         plugin.messageUtils.send(player, plugin.messageUtils.format("&7Please select pos1"));
         // Put time-limit on portal creation
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        int creationTaskID = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
             @Override
             public void run() {
                 if (player.getInventory().contains(selectionTool)) {
-                    // Take selection tool after 20 seconds
-                    plugin.portalManager.selectionHandler.takeSelectionTool(player);
-                    // Clear creationMap
-                    creationMap.remove(player.getUniqueId());
+                    cancelCreation(player);
                     // Send failed message
-                    plugin.messageUtils.send(player, plugin.messageUtils.format("&cCreation was cancelled for taking too long."));
+                    plugin.messageUtils.send(player, plugin.respond.gatewayCreationTimeout());
                 }
             }
-        }, 20*20L);
+        }, cancellationTime * 20L);
+        creationTasks.put(player.getUniqueId(), creationTaskID);
+        System.out.println("--->isPlayer in map? " + creationTasks.containsKey(player.getUniqueId()));
+    }
+
+    public void cancelCreation(Player player) {
+        // Take selection tool
+        plugin.portalManager.selectionHandler.takeSelectionTool(player);
+        // Remove player from creation maps
+        creationMap.remove(player.getUniqueId());
+        creationTasks.remove(player.getUniqueId());
+
     }
 
     public void takeSelectionTool(Player player) {
@@ -91,6 +105,10 @@ public class SelectionHandler implements Listener {
     }
 
     public Map<UUID, Portal> getCreationMap() {
-        return creationMap;
+        return this.creationMap;
+    }
+
+    public Map<UUID, Integer> getCreationTasks() {
+        return this.creationTasks;
     }
 }

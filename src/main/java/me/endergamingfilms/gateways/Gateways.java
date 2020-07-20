@@ -31,15 +31,15 @@ public final class Gateways extends JavaPlugin {
 
         // Register PlaceHolderAPI hook
         messageUtils.log(MessageUtils.LogLevel.INFO, "&9Loading plugin hooks.");
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            messageUtils.log(MessageUtils.LogLevel.INFO, "&9Plugin hooks successfully loaded.");
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && Bukkit.getPluginManager().isPluginEnabled("CMI")) {
+            // Hook into PAPI
             new HookPlaceholderAPI(this).register();
+            // Hook into CMI
+            cmiHook.setup();
+            messageUtils.log(MessageUtils.LogLevel.INFO, "&9Plugin hooks successfully loaded.");
         } else {
             messageUtils.log(MessageUtils.LogLevel.WARNING, "&9Unable to load hooks.");
         }
-
-        // Hook into CMI
-        cmiHook.setup();
 
         // Register Listeners/Managers
         portalManager = new PortalManager(this);

@@ -1,14 +1,9 @@
 package me.endergamingfilms.gateways.gateway;
 
 import com.Zrips.CMI.Modules.Portals.CMIPortal;
-import me.endergamingfilms.gateways.Gateways;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
-import javax.print.attribute.standard.Destination;
 
 public class Portal {
     private World world;
@@ -19,11 +14,12 @@ public class Portal {
     private final String portalName;
     private boolean isOpen;
     private CMIPortal cmiPortal;
+    private String customName;
 
     public Portal(final String portalName, World world) {
         this.isOpen = false;
         this.world = world;
-        this.portalName = portalName;
+        this.portalName = "gateway_" + portalName;
     }
 
     public World getWorld() {
@@ -58,6 +54,10 @@ public class Portal {
         return cmiPortal;
     }
 
+    public String getCustomName() {
+        return customName;
+    }
+
     public boolean isOpened() {
         return isOpen;
     }
@@ -84,6 +84,10 @@ public class Portal {
 
     public void setCmiPortal(CMIPortal cmiPortal) {
         this.cmiPortal = cmiPortal;
+    }
+
+    public void setCustomName(String customName) {
+        this.customName = customName;
     }
 
     public boolean isComplete() {

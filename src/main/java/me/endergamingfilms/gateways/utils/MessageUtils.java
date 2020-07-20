@@ -4,6 +4,7 @@ import me.endergamingfilms.gateways.Gateways;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -75,12 +76,16 @@ public class MessageUtils {
         return msg;
     }
 
-    public String getFormattedMessage(final String path, final FileConfiguration file) {
-        return format(grabRaw(path, file));
+    public String getFormattedMessage(final String path) {
+        return format(grabRaw(path, plugin.fileManager.getMessages()));
     }
 
-    public String getFormattedMessage(final String path, final FileConfiguration file, final boolean hasPrefix) {
-        return format(grabRaw(path, file), hasPrefix);
+    public String getFormattedMessage(final String path, final boolean hasPrefix) {
+        return format(grabRaw(path, plugin.fileManager.getMessages()), hasPrefix);
+    }
+
+    public String getFormattedMessage(final String path, final String name) {
+        return format(replace(grabRaw(path, plugin.fileManager.getMessages()), name));
     }
 
     public String format(final String msg) {
@@ -95,6 +100,11 @@ public class MessageUtils {
         }
     }
 
+    public String replace(String msg, final String name) {
+        msg = msg.replace("%portal%", name);
+        return msg;
+    }
+
     public int checkAmount(String amount) {
         if (amount.matches("[0-9]+")) {
             int number = Integer.parseInt(amount);
@@ -106,6 +116,10 @@ public class MessageUtils {
 
     public void send(Player player, String message) {
         player.sendMessage(message);
+    }
+
+    public void send(Server server, String message) {
+        server.broadcastMessage(message);
     }
 
     public void send(CommandSender sender, String message) {

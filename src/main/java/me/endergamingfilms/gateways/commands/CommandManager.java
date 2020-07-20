@@ -11,6 +11,8 @@ public class CommandManager {
     public List<BaseCommand> commandList = new ArrayList<>();
     public GatewaysCommand gatewaysCmd;
     public ReloadCommand reloadCmd;
+    public CreateCommand createCmd;
+    public DeleteCommand deleteCmd;
 
     public CommandManager(@NotNull final Gateways instance) {
         this.plugin = instance;
@@ -22,6 +24,8 @@ public class CommandManager {
 
         // Register Sub-Commands "/market command"
         reloadCmd = new ReloadCommand(plugin);
+        createCmd = new CreateCommand(plugin);
+        deleteCmd = new DeleteCommand(plugin);
 
         // Register BaseCommands "/command"
         for (BaseCommand command : commandList) {

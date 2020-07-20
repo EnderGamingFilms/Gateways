@@ -18,13 +18,11 @@ public class cmiHook {
     }
 
     public void setup() {
-        if (plugin.getServer().getPluginManager().isPluginEnabled("CMI")) {
-            cmiInstance = CMI.getInstance();
-            portalModule = CMI.getInstance().getPortalManager();
-        }
+        cmiInstance = CMI.getInstance();
+        portalModule = CMI.getInstance().getPortalManager();
     }
 
-    public void createPortal(Portal portal) {
+    public void createCMIPortal(Portal portal) {
         CMIPortal cmiPortal = new CMIPortal();
         CuboidArea portalBounds = new CuboidArea(portal.getPos1(), portal.getPos2());
         cmiPortal.setArea(portalBounds);

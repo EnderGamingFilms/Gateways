@@ -3,9 +3,19 @@ no-permission:
   message: "&cYou do not have permission for this command."
   prefix: true
 non-player: "&4Only players can run this command."
+gateway-opening-soon: '%portal% &9is opening in &630 seconds&e!'
+gateway-opened: '&aThe %portal% &agateway has just been opened! &d/warp gates'
+gateway-closed: '%portal% &chas collapsed into rubble...'
+gateway-already-opened: '&7This gateway is already open.'
+gateway-already-closed: '&7This gateway is already closed.'
+gateway-exists: '&cA gateway with that name already exists.'
+gateway-missing: '&cThis gateway doesn''t exist!'
+gateway-creation-timeout: '&cCreation was cancelled for taking too long.'
+gateway-deletion: '&aGateway successfully removed!'
+gateway-invalid-key: '&eThis key won''t work here.'
 help:
   header: "&9-------------------- &bGateways Help &9--------------------"
   reload: "&6/gateways reload&f - &eReload all files"
-  create: "&6/gateways create &f[portalName] - &eGet gateway mapping tool"
-  remove: "&6/gateways remove &f[portalName] - &eDelete a gateway"
+  create: "&6/gateways create &f[gateway] [customName] - &eCreate a new gateway"
+  remove: "&6/gateways remove &f[gateway] - &eDelete a gateway"
   list: "&6/gateways list &f- &eGet a list of all gateways"

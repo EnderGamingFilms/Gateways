@@ -60,11 +60,6 @@ public class OnSelectionToolUse implements Listener {
                                 clickedBlock.getLocation().setY(clickedBlock.getLocation().getY() + 1);
                                 v.setDestination(clickedBlock);
                             }
-//                            System.out.println("---->World: " + v.getWorld());
-//                            System.out.println("---->Portal: " + v.getPortalName());
-//                            System.out.println("---->Pos1: " + v.getPos1());
-//                            System.out.println("---->Pos2: " + v.getPos2());
-//                            System.out.println("---->KeyBlock: " + v.getKeyBlock());
                         }
                     });
                     // Check if portal is complete take tool
@@ -77,9 +72,10 @@ public class OnSelectionToolUse implements Listener {
                         temp.getPos2().getBlock().setType(Material.AIR);
                         // Add newly created portal
                         plugin.portalManager.addPortal(temp);
-                        plugin.cmiHook.createPortal(temp);
-                        // Remove player from creationMap
+                        plugin.cmiHook.createCMIPortal(temp);
+                        // Remove player from creation maps
                         plugin.portalManager.selectionHandler.getCreationMap().remove(player.getUniqueId());
+                        plugin.portalManager.selectionHandler.getCreationTasks().remove(player.getUniqueId());
                         // Send success message
                         plugin.messageUtils.send(player, plugin.messageUtils.format("&7Portal has been created!"));
                     }
