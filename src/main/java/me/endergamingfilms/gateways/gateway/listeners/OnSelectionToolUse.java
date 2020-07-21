@@ -2,6 +2,7 @@ package me.endergamingfilms.gateways.gateway.listeners;
 
 import me.endergamingfilms.gateways.Gateways;
 import me.endergamingfilms.gateways.gateway.Portal;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -48,38 +49,49 @@ public class OnSelectionToolUse implements Listener {
                     plugin.portalManager.selectionHandler.getCreationMap().forEach((k, v) -> {
                         if (player.getUniqueId() == k) {
                             if (v.getPos1() == null) {
-                                v.setPos1(clickedBlock);
+                                v.setPos1(clickedBlock.getLocation());
                                 plugin.messageUtils.send(player, plugin.messageUtils.format("&7Please select pos2"));
                             } else if (v.getPos2() == null) {
-                                v.setPos2(clickedBlock);
+                                v.setPos2(clickedBlock.getLocation());
                                 plugin.messageUtils.send(player, plugin.messageUtils.format("&7Please select keyBlock"));
-                            } else if (v.getKeyBlock() == null) {
-                                v.setKeyBlock(clickedBlock);
-                                plugin.messageUtils.send(player, plugin.messageUtils.format("&7Please select destination"));
-                            } else if (v.getDestination() == null) {
-                                clickedBlock.getLocation().setY(clickedBlock.getLocation().getY() + 1);
-                                v.setDestination(clickedBlock);
+                            } else if (v.getKeyBlockLocation() == null) {
+                                v.setKeyBlock(clickedBlock.getLocation());
+                                plugin.messageUtils.send(player, plugin.messageUtils.format("&7Please select destination (left-click)"));
                             }
                         }
                     });
-                    // Check if portal is complete take tool
-                    if (plugin.portalManager.selectionHandler.getCreationMap().get(player.getUniqueId()).isComplete()) {
-                        Portal temp = plugin.portalManager.selectionHandler.getCreationMap().get(player.getUniqueId());
-                        // Take selection tool
-                        plugin.portalManager.selectionHandler.takeSelectionTool(player);
-                        // Remove blocks at pos1 & pos2
-                        temp.getPos1().getBlock().setType(Material.AIR);
-                        temp.getPos2().getBlock().setType(Material.AIR);
-                        // Add newly created portal
-                        plugin.portalManager.addPortal(temp);
-                        plugin.cmiHook.createCMIPortal(temp);
-                        // Remove player from creation maps
-                        plugin.portalManager.selectionHandler.getCreationMap().remove(player.getUniqueId());
-                        plugin.portalManager.selectionHandler.getCreationTasks().remove(player.getUniqueId());
-                        // Send success message
-                        plugin.messageUtils.send(player, plugin.messageUtils.format("&7Portal has been created!"));
-                    }
                 }
+            } else {
+                // Set destination with left-click
+                plugin.portalManager.selectionHandler.getCreationMap().forEach((k, v) -> {
+                    if (player.getUniqueId() == k) {
+                        if (v.getKeyBlockLocation() == null) return; // Don't run unless ready
+                        if (v.getDestination() == null) {
+                            Location playerLoc = event.getPlayer().getLocation();
+                            Location loc = new Location(event.getPlayer().getWorld(),
+                                    playerLoc.getX(), playerLoc.getY(), playerLoc.getZ(),
+                                    playerLoc.getYaw(), playerLoc.getPitch());
+                            v.setDestination(loc);
+                        }
+                    }
+                });
+            }
+            // Check if portal is complete take tool
+            if (plugin.portalManager.selectionHandler.getCreationMap().get(player.getUniqueId()).isComplete()) {
+                Portal temp = plugin.portalManager.selectionHandler.getCreationMap().get(player.getUniqueId());
+                // Take selection tool
+                plugin.portalManager.selectionHandler.takeSelectionTool(player);
+                // Remove blocks at pos1 & pos2
+                temp.getPos1().getBlock().setType(Material.AIR);
+                temp.getPos2().getBlock().setType(Material.AIR);
+                // Add newly created portal
+                plugin.portalManager.addPortal(temp);
+                plugin.cmiHook.createCMIPortal(temp);
+                // Remove player from creation maps
+                plugin.portalManager.selectionHandler.getCreationMap().remove(player.getUniqueId());
+                plugin.portalManager.selectionHandler.getCreationTasks().remove(player.getUniqueId());
+                // Send success message
+                plugin.messageUtils.send(player, plugin.messageUtils.format("&7Portal has been created!"));
             }
         }
     }

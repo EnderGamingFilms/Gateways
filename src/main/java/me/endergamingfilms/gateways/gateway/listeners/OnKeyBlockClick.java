@@ -31,8 +31,6 @@ public class OnKeyBlockClick implements Listener {
         if ((player.getItemInHand().getType() != Material.FEATHER)) return;
         // If the item has no item meta then return
 //        if (player.getItemInHand().getItemMeta() == null) return
-
-        System.out.println("arePortalsEmpty? " + plugin.portalManager.getActivePortals().isEmpty());
         if (!plugin.portalManager.getActivePortals().isEmpty()) {
             System.out.println("rightclick? " + event.getAction().equals(Action.RIGHT_CLICK_BLOCK));
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
@@ -44,7 +42,8 @@ public class OnKeyBlockClick implements Listener {
                     if (clickedBlock != null) {
                         System.out.println("---->isKeyBlock? " + clickedBlock.getLocation().equals(portal.getKeyBlockLocation()));
                         if (clickedBlock.getLocation().equals(portal.getKeyBlockLocation()))
-                            plugin.portalManager.openPortal(player, name);
+                            event.setCancelled(true);
+//                            plugin.portalManager.openPortal(player, name);
                     }
                 }
             }

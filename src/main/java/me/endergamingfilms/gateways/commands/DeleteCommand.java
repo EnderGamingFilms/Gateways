@@ -24,6 +24,7 @@ public class DeleteCommand {
         String fullPortalName = "gateway_" + args[1];
         if (plugin.portalManager.getActivePortals().containsKey(fullPortalName)) {
             plugin.portalManager.removePortal(fullPortalName);
+            plugin.fileManager.removePortalFromFile(fullPortalName);
             // Send success message
             plugin.messageUtils.send(player, plugin.respond.gatewayDeleted());
         } else

@@ -48,8 +48,6 @@ public class PortalManager {
         if (!activePortals.isEmpty()) {
             for (Map.Entry<String, Portal> entry : activePortals.entrySet()) {
                 String name = entry.getKey();
-                System.out.println("---->key: " + name);
-                System.out.println("---->exists? " + name);
                 if (name.equalsIgnoreCase(passedName) || plugin.cmiHook.portalModule.getByName(passedName) != null) {
                     plugin.messageUtils.send(player, plugin.respond.gatewayExists());
                     return;
@@ -107,5 +105,9 @@ public class PortalManager {
         activePortals.remove(portalName);
         if (plugin.cmiHook.portalModule.getPortals().containsKey(portalName))
             plugin.cmiHook.portalModule.removePortal(plugin.cmiHook.portalModule.getByName(portalName));
+    }
+
+    public Portal getPortal(String str) {
+        return activePortals.get(str);
     }
 }

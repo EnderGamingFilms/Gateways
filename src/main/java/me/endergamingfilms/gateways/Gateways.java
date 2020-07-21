@@ -42,12 +42,17 @@ public final class Gateways extends JavaPlugin {
         }
 
         // Register Listeners/Managers
+        messageUtils.log(MessageUtils.LogLevel.INFO, "&9Loading in gateways.");
         portalManager = new PortalManager(this);
+
+        // Setup Gateways
+        fileManager.readGateways();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        fileManager.saveGateways();
         HandlerList.unregisterAll(this);
     }
 

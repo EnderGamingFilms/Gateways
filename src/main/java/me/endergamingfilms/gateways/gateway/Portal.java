@@ -10,7 +10,7 @@ public class Portal {
     private Location pos1;
     private Location pos2;
     private Location destination;
-    private Block keyBlock;
+    private Location keyBlock;
     private final String portalName;
     private boolean isOpen;
     private CMIPortal cmiPortal;
@@ -19,7 +19,7 @@ public class Portal {
     public Portal(final String portalName, World world) {
         this.isOpen = false;
         this.world = world;
-        this.portalName = "gateway_" + portalName;
+        this.portalName = portalName;
     }
 
     public World getWorld() {
@@ -38,12 +38,12 @@ public class Portal {
         return this.pos2;
     }
 
-    public Block getKeyBlock() {
-        return this.keyBlock;
-    }
+//    public Location getKeyBlock() {
+//        return this.keyBlock;
+//    }
 
     public Location getKeyBlockLocation() {
-        return this.keyBlock.getLocation();
+        return this.keyBlock;
     }
 
     public Location getDestination() {
@@ -66,20 +66,20 @@ public class Portal {
         this.isOpen = isOpen;
     }
 
-    public void setPos1(final Block pos1) {
-        this.pos1 = pos1.getLocation();
+    public void setPos1(final Location pos1) {
+        this.pos1 = pos1;
     }
 
-    public void setPos2(final Block pos2) {
-        this.pos2 = pos2.getLocation();
+    public void setPos2(final Location pos2) {
+        this.pos2 = pos2;
     }
 
-    public void setKeyBlock(final Block keyBlock) {
+    public void setKeyBlock(final Location keyBlock) {
         this.keyBlock = keyBlock;
     }
 
-    public void setDestination(final Block destination) {
-        this.destination = destination.getLocation();
+    public void setDestination(final Location destination) {
+        this.destination = destination;
     }
 
     public void setCmiPortal(CMIPortal cmiPortal) {

@@ -2,11 +2,17 @@ package me.endergamingfilms.gateways.utils;
 
 
 import me.endergamingfilms.gateways.Gateways;
+import me.endergamingfilms.gateways.gateway.Portal;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileManager {
@@ -36,8 +42,10 @@ public class FileManager {
      */
     private FileConfiguration config;
     private FileConfiguration messages;
+    private FileConfiguration gateways;
     private File configFile;
     private File messageFile;
+    private File gatewaysFile;
     //------------------------------------------
 
     public void setup() {
@@ -46,6 +54,8 @@ public class FileManager {
         reloadSettings();
         // Load everything else
         setupMessages();
+        // Setup gateways.yml
+        setupGateways();
     }
 
     /**
@@ -126,6 +136,136 @@ public class FileManager {
     //------------------------------------------
 
     /**
+     * |-------------- Gateways.yml --------------|
+     */
+    public void setupGateways() {
+        if (!plugin.getDataFolder().exists()) {
+            plugin.getDataFolder().mkdir();
+        }
+
+        gatewaysFile = new File(plugin.getDataFolder(), "gateways.yml");
+
+        if (!gatewaysFile.exists()) {
+            try {
+//                plugin.saveResource("gateways.yml", true);
+                gatewaysFile.createNewFile();
+//                plugin.messageUtils.log(MessageUtils.LogLevel.WARNING, "&eGateways.yml did not exist so one was created");
+            } catch (IOException e) {
+                e.printStackTrace();
+                plugin.messageUtils.log(MessageUtils.LogLevel.SEVERE, "&cThere was an issue creating Gateways.yml");
+            }
+        }
+        gateways = YamlConfiguration.loadConfiguration(gatewaysFile);
+    }
+
+    public FileConfiguration getGateways() {
+        return messages;
+    }
+
+    public File getGatewaysFile() {
+        return messageFile;
+    }
+
+    public void readGateways() {
+        // Check if the gateways.yml is empty
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(gatewaysFile));
+            boolean empty = reader.readLine() == null;
+            if (empty) return;
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // If the file is not empty
+        List<String> portalList = gateways.getStringList("portals");
+        for (String str : portalList) {
+            if (str == null) continue;
+            // Create new portal object
+            Portal portal = new Portal(str, Bukkit.getWorld(String.valueOf(gateways.get(str + ".World"))));
+            portal.setCustomName(String.valueOf(gateways.get(str + ".CustomName")));
+            portal.setIsOpen(Boolean.parseBoolean(String.valueOf(gateways.get(str + ".IsOpen"))));
+            Location keyBlockLoc = new Location(portal.getWorld(),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".KeyBlock.x"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".KeyBlock.y"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".KeyBlock.z"))));
+            portal.setKeyBlock(keyBlockLoc);
+
+            Location destination = new Location(Bukkit.getWorld(String.valueOf(gateways.get(str + ".Destination.world"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Destination.x"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Destination.y"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Destination.z"))),
+                    Float.parseFloat(String.valueOf(gateways.get(str + ".Destination.yaw"))),
+                    Float.parseFloat(String.valueOf(gateways.get(str + ".Destination.pitch"))));
+            portal.setDestination(destination);
+
+            Location pos1 = new Location(portal.getWorld(),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos1.x"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos1.y"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos1.z"))));
+            portal.setPos1(pos1);
+
+            Location pos2 = new Location(portal.getWorld(),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos2.x"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos2.y"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos2.z"))));
+            portal.setPos2(pos2);
+
+            plugin.portalManager.addPortal(portal);
+            plugin.cmiHook.createCMIPortal(portal);
+        }
+
+    }
+
+    public void saveGateways() {
+        List<String> portalList = new ArrayList<>();
+        plugin.portalManager.getActivePortals().forEach((k,v) -> {
+            portalList.add(k);
+        });
+        gateways.set("portals", portalList);
+
+        portalList.forEach(str -> {
+            Portal portal = plugin.portalManager.getPortal(str);
+            String currentPortal = portal.getPortalName();
+            gateways.set(currentPortal + ".CustomName", portal.getCustomName());
+            gateways.set(currentPortal + ".World", portal.getWorld().getName());
+            gateways.set(currentPortal + ".IsOpen", portal.isOpened());
+            gateways.set(currentPortal + ".KeyBlock.x", portal.getKeyBlockLocation().getX());
+            gateways.set(currentPortal + ".KeyBlock.y", portal.getKeyBlockLocation().getY());
+            gateways.set(currentPortal + ".KeyBlock.z", portal.getKeyBlockLocation().getZ());
+            gateways.set(currentPortal + ".Destination.world", portal.getDestination().getWorld().getName());
+            gateways.set(currentPortal + ".Destination.x", portal.getDestination().getX());
+            gateways.set(currentPortal + ".Destination.y", portal.getDestination().getY());
+            gateways.set(currentPortal + ".Destination.z", portal.getDestination().getZ());
+            gateways.set(currentPortal + ".Destination.yaw", portal.getDestination().getYaw());
+            gateways.set(currentPortal + ".Destination.pitch", portal.getDestination().getPitch());
+            gateways.set(currentPortal + ".Bounds.Pos1.x", portal.getPos1().getX());
+            gateways.set(currentPortal + ".Bounds.Pos1.y", portal.getPos1().getY());
+            gateways.set(currentPortal + ".Bounds.Pos1.z", portal.getPos1().getZ());
+            gateways.set(currentPortal + ".Bounds.Pos2.x", portal.getPos2().getX());
+            gateways.set(currentPortal + ".Bounds.Pos2.y", portal.getPos2().getY());
+            gateways.set(currentPortal + ".Bounds.Pos2.z", portal.getPos2().getZ());
+        });
+
+        // Save Gateways File
+        try {
+            gateways.save(gatewaysFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removePortalFromFile(String path) {
+        gateways.set(path, null);
+    }
+
+    public void reloadGateways() {
+        gateways = YamlConfiguration.loadConfiguration(gatewaysFile);
+    }
+
+    //------------------------------------------
+
+    /**
      * |-------------- General File Functions --------------|
      */
     public void reloadAll() {
@@ -136,6 +276,9 @@ public class FileManager {
         reloadSettings();
         // Stage 3 - Remake Items
         plugin.portalManager.selectionHandler.makeSelectionTool();
+        // Stage 4 - Read in portals and keys
+        reloadGateways();
+        readGateways();
     }
     //------------------------------------------
 }

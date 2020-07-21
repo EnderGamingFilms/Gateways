@@ -23,20 +23,23 @@ public class cmiHook {
     }
 
     public void createCMIPortal(Portal portal) {
-        CMIPortal cmiPortal = new CMIPortal();
-        CuboidArea portalBounds = new CuboidArea(portal.getPos1(), portal.getPos2());
-        cmiPortal.setArea(portalBounds);
-        cmiPortal.setName(portal.getPortalName());
-        cmiPortal.setActivationRange(15);
-        cmiPortal.setTpLoc(portal.getDestination());
-        cmiPortal.setWorld(portal.getWorld());
+        // If the portal doesn't exist then create it
+        if (portalModule.getByName(portal.getPortalName()) == null) {
+            CMIPortal cmiPortal = new CMIPortal();
+            CuboidArea portalBounds = new CuboidArea(portal.getPos1(), portal.getPos2());
+            cmiPortal.setArea(portalBounds);
+            cmiPortal.setName(portal.getPortalName());
+            cmiPortal.setActivationRange(15);
+            cmiPortal.setTpLoc(portal.getDestination());
+            cmiPortal.setWorld(portal.getWorld());
 
-        cmiPortal.setEnabled(false);
+            cmiPortal.setEnabled(false);
 
-        portal.setCmiPortal(cmiPortal);
+            portal.setCmiPortal(cmiPortal);
 
-        portalModule.addPortal(cmiPortal);
-        portalModule.savePortals();
+            portalModule.addPortal(cmiPortal);
+            portalModule.savePortals();
+        } else
+            portalModule.getByName(portal.getPortalName()).setEnabled(false);
     }
-
 }

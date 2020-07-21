@@ -71,7 +71,8 @@ public class SelectionHandler implements Listener {
 
     public void startSelection(Player player, final String[] args) {
         int cancellationTime = 60;
-        Portal portal = new Portal(args[1], player.getWorld());
+        String passedName = "gateway_" + args[1];
+        Portal portal = new Portal(passedName, player.getWorld());
         portal.setCustomName(args[2]);
         creationMap.put(player.getUniqueId(), portal);
         giveSelectionTool(player);
@@ -88,7 +89,6 @@ public class SelectionHandler implements Listener {
             }
         }, cancellationTime * 20L);
         creationTasks.put(player.getUniqueId(), creationTaskID);
-        System.out.println("--->isPlayer in map? " + creationTasks.containsKey(player.getUniqueId()));
     }
 
     public void cancelCreation(Player player) {
