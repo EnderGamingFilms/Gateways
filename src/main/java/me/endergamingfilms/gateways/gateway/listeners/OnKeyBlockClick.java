@@ -39,7 +39,6 @@ public class OnKeyBlockClick implements Listener {
             // Cancel all interactions with this "PortalKey"
             event.setCancelled(true);
             if (!plugin.portalManager.getActivePortals().isEmpty()) {
-                System.out.println("rightclick? " + event.getAction().equals(Action.RIGHT_CLICK_BLOCK));
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     Portal portal = plugin.portalManager.getPortal(container.get(plugin.portalManager.keyFor, PersistentDataType.STRING));
                     if (portal == null) return;
@@ -48,7 +47,7 @@ public class OnKeyBlockClick implements Listener {
                         // Check if the location clicked is the KeyBlock for the portal
                         if (Objects.equals(clickedBlock.getLocation(), portal.getKeyBlockLocation())) {
                             player.getInventory().remove(Objects.requireNonNull(event.getItem()));
-                            plugin.messageUtils.send(player, plugin.messageUtils.format("&6You use a key on the activation block!"));
+                            plugin.messageUtils.send(player, plugin.respond.gatewayKeyUsed());
                             plugin.portalManager.openPortal(player, portal);
                         } else {
                             plugin.messageUtils.send(player, plugin.respond.gatewayWrongKey());

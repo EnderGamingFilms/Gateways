@@ -72,6 +72,9 @@ public class Responses {
     public String gatewayDeleted() {
         return plugin.messageUtils.getFormattedMessage("gateway-deletion");
     }
+    public String gatewayKeyUsed() {
+        return plugin.messageUtils.getFormattedMessage("gateway-key-used");
+    }
 
     public TextComponent listGateways() {
         TextComponent message = new TextComponent();

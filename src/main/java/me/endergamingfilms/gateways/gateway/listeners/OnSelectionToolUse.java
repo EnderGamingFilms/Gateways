@@ -1,7 +1,6 @@
 package me.endergamingfilms.gateways.gateway.listeners;
 
 import me.endergamingfilms.gateways.Gateways;
-import me.endergamingfilms.gateways.gateway.Portal;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,8 +13,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class OnSelectionToolUse implements Listener {
     private final Gateways plugin;
@@ -53,7 +50,7 @@ public class OnSelectionToolUse implements Listener {
                                 v.setPos2(clickedBlock.getLocation());
                                 plugin.messageUtils.send(player, plugin.messageUtils.format("&7Please select keyBlock"));
                             } else if (v.getKeyBlockLocation() == null) {
-                                v.setKeyBlock(clickedBlock.getLocation());
+                                v.setKeyBlockLocation(clickedBlock.getLocation());
                                 plugin.messageUtils.send(player, plugin.messageUtils.format("&7Please select destination (left-click)"));
                             }
                         }

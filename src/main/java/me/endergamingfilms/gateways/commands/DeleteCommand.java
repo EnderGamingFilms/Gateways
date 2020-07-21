@@ -21,10 +21,9 @@ public class DeleteCommand {
             plugin.messageUtils.send(player, plugin.respond.getHelp("remove"));
             return;
         }
-        String fullPortalName = "gateway_" + args[1];
-        if (plugin.portalManager.getActivePortals().containsKey(fullPortalName)) {
-            plugin.portalManager.removePortal(fullPortalName);
-            plugin.fileManager.removePortalFromFile(fullPortalName);
+        if (plugin.portalManager.getActivePortals().containsKey(args[1])) {
+            plugin.portalManager.removePortal(args[1]);
+            plugin.fileManager.removePortalFromFile(args[1]);
             // Send success message
             plugin.messageUtils.send(player, plugin.respond.gatewayDeleted());
         } else

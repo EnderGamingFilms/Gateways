@@ -76,6 +76,8 @@ public class SelectionHandler implements Listener {
         Portal portal = new Portal(passedName, player.getWorld());
         // Create new PortalKey
         portal.setPortalKey(plugin.portalManager.createKey(portal, player.getItemInHand()));
+        // Set default portal keepAlive (change in config)
+        portal.setKeepAlive(plugin.fileManager.defaultPortalOnTime);
         // Set the Portal DisplayName
         portal.setCustomName(args[2]);
         // Add player & portal to creaitionMap

@@ -64,7 +64,7 @@ public class PortalManager {
     }
 
     public void openPortal(Player player, Portal portal) {
-        int onTime = Math.max(plugin.fileManager.defaultPortalOnTime, 1);
+        int onTime = Math.max(plugin.fileManager.defaultPortalOnTime, portal.getKeepAlive());
         // Set portal on time
         // TODO
 

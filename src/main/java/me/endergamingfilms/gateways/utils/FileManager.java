@@ -3,16 +3,11 @@ package me.endergamingfilms.gateways.utils;
 
 import me.endergamingfilms.gateways.Gateways;
 import me.endergamingfilms.gateways.gateway.Portal;
-import me.endergamingfilms.gateways.gateway.PortalKey;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -193,7 +188,7 @@ public class FileManager {
                     Double.parseDouble(String.valueOf(gateways.get(str + ".KeyBlock.x"))),
                     Double.parseDouble(String.valueOf(gateways.get(str + ".KeyBlock.y"))),
                     Double.parseDouble(String.valueOf(gateways.get(str + ".KeyBlock.z"))));
-            portal.setKeyBlock(keyBlockLoc);
+            portal.setKeyBlockLocation(keyBlockLoc);
             // Get Destination Data
             Location destination = new Location(Bukkit.getWorld(String.valueOf(gateways.get(str + ".Destination.world"))),
                     Double.parseDouble(String.valueOf(gateways.get(str + ".Destination.x"))),
@@ -202,23 +197,28 @@ public class FileManager {
                     Float.parseFloat(String.valueOf(gateways.get(str + ".Destination.yaw"))),
                     Float.parseFloat(String.valueOf(gateways.get(str + ".Destination.pitch"))));
             portal.setDestination(destination);
+            // Get Portal Data
+            portal.setPortalParticles(String.valueOf(gateways.get(str + ".Portal.Particles")));
+            portal.setParticleAmount(gateways.getInt(str + ".Portal.particleAmount"));
+            portal.setKeepAlive(Math.max(gateways.getInt(str + ".Portal.keepAlive"), this.defaultPortalOnTime));
             // Get Pos1 Data
             Location pos1 = new Location(portal.getWorld(),
-                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos1.x"))),
-                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos1.y"))),
-                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos1.z"))));
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Portal.Pos1.x"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Portal.Pos1.y"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Portal.Pos1.z"))));
             portal.setPos1(pos1);
             // Get Pos2 Data
             Location pos2 = new Location(portal.getWorld(),
-                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos2.x"))),
-                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos2.y"))),
-                    Double.parseDouble(String.valueOf(gateways.get(str + ".Bounds.Pos2.z"))));
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Portal.Pos2.x"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Portal.Pos2.y"))),
+                    Double.parseDouble(String.valueOf(gateways.get(str + ".Portal.Pos2.z"))));
             portal.setPos2(pos2);
             // Get Key Data
-            ItemStack itemStack;
+            ItemStack itemStack = null;
             if (String.valueOf(gateways.get(str + ".Key.type")).matches("(<hdb:.+>)")) { // If itemtype is using HeadDB
-                System.out.println("---->HDB Type Found");
-                itemStack = plugin.hdbHook.hdb.getItemHead(String.valueOf(gateways.get(str + ".Key.type")).replaceAll("[<>]", "").split(":")[1]);
+                // If HeadDB is not available return
+                if (plugin.hdbHook.hdb != null)
+                    itemStack = plugin.hdbHook.hdb.getItemHead(String.valueOf(gateways.get(str + ".Key.type")).replaceAll("[<>]", "").split(":")[1]);
                 if (itemStack == null) itemStack = new ItemStack(Material.STONE);
             } else { // If itemType is vanilla minecraft
                 Material material = Material.matchMaterial(gateways.getString(str + ".Key.type"));
@@ -270,21 +270,27 @@ public class FileManager {
             gateways.set(str + ".Destination.z", portal.getDestination().getZ());
             gateways.set(str + ".Destination.yaw", portal.getDestination().getYaw());
             gateways.set(str + ".Destination.pitch", portal.getDestination().getPitch());
-            // Set Bounds Data
-            gateways.set(str + ".Bounds.Pos1.x", portal.getPos1().getX());
-            gateways.set(str + ".Bounds.Pos1.y", portal.getPos1().getY());
-            gateways.set(str + ".Bounds.Pos1.z", portal.getPos1().getZ());
-            gateways.set(str + ".Bounds.Pos2.x", portal.getPos2().getX());
-            gateways.set(str + ".Bounds.Pos2.y", portal.getPos2().getY());
-            gateways.set(str + ".Bounds.Pos2.z", portal.getPos2().getZ());
+            // Set Portal Data
+            gateways.set(str + ".Portal.Particles", portal.getCmiPortal().getEffect().getName());
+            gateways.set(str + ".Portal.particleAmount", portal.getParticleAmount());
+            gateways.set(str + ".Portal.keepAlive", portal.getKeepAlive());
+            gateways.set(str + ".Portal.Pos1.x", portal.getPos1().getX());
+            gateways.set(str + ".Portal.Pos1.y", portal.getPos1().getY());
+            gateways.set(str + ".Portal.Pos1.z", portal.getPos1().getZ());
+            gateways.set(str + ".Portal.Pos2.x", portal.getPos2().getX());
+            gateways.set(str + ".Portal.Pos2.y", portal.getPos2().getY());
+            gateways.set(str + ".Portal.Pos2.z", portal.getPos2().getZ());
             // Set Key Data
-            if (plugin.hdbHook.getHeadID(portal.getPortalKey().getKeyItem()) != null) {
+            if (plugin.hdbHook.hdb != null && plugin.hdbHook.getHeadID(portal.getPortalKey().getKeyItem()) != null) {
                 gateways.set(str + ".Key.type", "<hdb:" + plugin.hdbHook.getHeadID(portal.getPortalKey().getKeyItem()) + ">");
             } else {
                 gateways.set(str + ".Key.type", portal.getPortalKey().getKeyItem().getType().getKey().getKey());
             }
             gateways.set(str + ".Key.display-name", portal.getPortalKey().getKeyMeta().getDisplayName().replace("§", "&"));
-            gateways.set(str + ".Key.lore", portal.getPortalKey().getKeyMeta().getLore());
+            if (portal.getPortalKey().getKeyMeta().hasLore())
+                gateways.set(str + ".Key.lore", portal.getPortalKey().getKeyMeta().getLore());
+            else
+                gateways.set(str + ".Key.lore", "[]");
         });
 
         // Save Gateways File

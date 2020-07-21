@@ -6,7 +6,7 @@
 
     <groupId>me.endergamingfilms</groupId>
     <artifactId>Gateways</artifactId>
-    <version>3.6</version>
+    <version>4.1</version>
     <packaging>jar</packaging>
 
     <name>Gateways</name>

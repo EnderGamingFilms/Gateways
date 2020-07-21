@@ -5,16 +5,19 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 public class Portal {
-    private World world;
+    private final World world;
     private Location pos1;
     private Location pos2;
     private Location destination;
-    private Location keyBlock;
+    private Location keyBlockLocation;
     private final String portalName;
     private boolean isOpen;
     private CMIPortal cmiPortal;
     private String customName;
     private PortalKey portalKey;
+    private int keepAlive;
+    private String portalParticles;
+    private int particleAmount;
 
     public Portal(final String portalName, World world) {
         this.isOpen = false;
@@ -38,12 +41,8 @@ public class Portal {
         return this.pos2;
     }
 
-//    public Location getKeyBlock() {
-//        return this.keyBlock;
-//    }
-
     public Location getKeyBlockLocation() {
-        return this.keyBlock;
+        return this.keyBlockLocation;
     }
 
     public Location getDestination() {
@@ -62,6 +61,17 @@ public class Portal {
         return this.portalKey;
     }
 
+    public int getKeepAlive() {
+        return keepAlive;
+    }
+
+    public String getPortalParticles() {
+        return portalParticles;
+    }
+
+    public int getParticleAmount() {
+        return particleAmount;
+    }
 
     public boolean isOpened() {
         return isOpen;
@@ -79,8 +89,8 @@ public class Portal {
         this.pos2 = pos2;
     }
 
-    public void setKeyBlock(final Location keyBlock) {
-        this.keyBlock = keyBlock;
+    public void setKeyBlockLocation(final Location keyBlockLocation) {
+        this.keyBlockLocation = keyBlockLocation;
     }
 
     public void setDestination(final Location destination) {
@@ -99,8 +109,20 @@ public class Portal {
         this.portalKey = portalKey;
     }
 
+    public void setKeepAlive(int keepAlive) {
+        this.keepAlive = keepAlive;
+    }
+
+    public void setPortalParticles(String portalParticles) {
+        this.portalParticles = portalParticles;
+    }
+
+    public void setParticleAmount(int particleAmount) {
+        this.particleAmount = particleAmount;
+    }
+
     public boolean isComplete() {
-        if (pos1 == null || pos2 == null || keyBlock == null || destination == null) return false;
+        if (pos1 == null || pos2 == null || keyBlockLocation == null || destination == null) return false;
         return true;
     }
 }

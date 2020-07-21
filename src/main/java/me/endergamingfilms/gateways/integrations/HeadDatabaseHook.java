@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class HeadDatabaseHook implements Listener {
-    // TODO
     private final Gateways plugin;
     public HeadDatabaseAPI hdb;
 
@@ -25,6 +24,7 @@ public class HeadDatabaseHook implements Listener {
     }
 
     public String getHeadID(ItemStack item) {
+        if (hdb == null) return null;
         String returned = "";
         try {
             returned = hdb.getItemID(item);

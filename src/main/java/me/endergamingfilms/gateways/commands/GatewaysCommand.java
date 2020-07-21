@@ -1,6 +1,7 @@
 package me.endergamingfilms.gateways.commands;
 
 import me.endergamingfilms.gateways.Gateways;
+import me.endergamingfilms.gateways.gateway.Portal;
 import me.endergamingfilms.gateways.gateway.PortalKey;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -8,8 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class GatewaysCommand extends BaseCommand {
     private final Gateways plugin;
@@ -37,28 +39,16 @@ public class GatewaysCommand extends BaseCommand {
         } else if (args[0].equalsIgnoreCase("create")) {
             plugin.cmdManager.createCmd.run(player, args);
         } else if (args[0].equalsIgnoreCase("test")) { // --------- Test Command --------- \\
-//            if (args.length == 3) {
-//                if (args[1].equalsIgnoreCase("getkey")) {
-                    String fullPortalName = "gateway_" + args[1];
-                    System.out.println("---->passedName: " + fullPortalName);
-                    System.out.println("---->portalIsActive: " + plugin.portalManager.getActivePortals().containsKey(fullPortalName));
-                    if (!plugin.portalManager.getActivePortals().containsKey(fullPortalName)) return false;
-                    PortalKey portalKey = plugin.portalManager.getPortal(fullPortalName).getPortalKey();
-                    System.out.println("---->portalKey: " + portalKey);
-                    if (portalKey == null) return false;
-                    player.getInventory().addItem(portalKey.getKeyItem());
-//                } else if (args[1].equalsIgnoreCase("head")) {
-//                    player.getInventory().addItem(plugin.hdbHook.hdb.getItemHead(args[2]));
-//                }
-//            } else if (args.length == 2) {
-//                if (args[1].equalsIgnoreCase("save")) {
-//                    plugin.fileManager.saveGateways();
-//                }
-//            } else {
-//                plugin.messageUtils.send(player, "ItemID = " + plugin.hdbHook.hdb.getItemID(player.getItemInHand()));
-//            }
-        } else if (args[0].matches("rm|rem|remove")) {
+            // TODO: Test Code Here
+            plugin.fileManager.saveGateways();
+        } else if (args[0].matches("remove")) {
             plugin.cmdManager.deleteCmd.run(player, args);
+        } else if (args[0].equalsIgnoreCase("givekey")) {
+            if (args.length < 2) return false;
+            if (!plugin.portalManager.getActivePortals().containsKey(args[1])) return false;
+            PortalKey portalKey = plugin.portalManager.getPortal(args[1]).getPortalKey();
+            if (portalKey == null) return false;
+            player.getInventory().addItem(portalKey.getKeyItem());
         } else if (args[0].equalsIgnoreCase("list")) {
             if (!player.hasPermission("gateways.command.list")) {
                 plugin.messageUtils.send(player, plugin.respond.noPerms());
@@ -70,5 +60,33 @@ public class GatewaysCommand extends BaseCommand {
             return false;
         }
         return true;
+    }
+
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 1) {
+            return plugin.cmdManager.subCommandList;
+        }
+
+        List<String> commandNeedsPortal = Arrays.asList("remove", "givekey");
+        if (args.length == 2 && commandNeedsPortal.contains(args[0])) {
+                List<String> portalList = new ArrayList<>();
+                for (Map.Entry<String, Portal> entry : plugin.portalManager.getActivePortals().entrySet()) {
+                    String portalName = entry.getKey();
+                    if (portalName != null) portalList.add(portalName);
+                }
+                return portalList;
+//            }
+        }
+
+        if (args.length == 3 && args[1].equalsIgnoreCase("givekey")) {
+            List<String> players = new ArrayList<>();
+            for (Player p : plugin.getServer().getOnlinePlayers()) {
+                players.add(p.getName());
+            }
+            return players;
+        }
+        return null;
     }
 }
