@@ -11,9 +11,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class OnKeyBlockClick implements Listener {
     private final Gateways plugin;
@@ -27,23 +29,30 @@ public class OnKeyBlockClick implements Listener {
         // Only Run Code for main hand
         if (event.getHand() == EquipmentSlot.OFF_HAND) return;
         // If no item in hand then return
-        Player player = event.getPlayer();
-        if ((player.getItemInHand().getType() != Material.FEATHER)) return;
+        if ((event.getPlayer().getItemInHand().getType() == Material.AIR)) return;
         // If the item has no item meta then return
-//        if (player.getItemInHand().getItemMeta() == null) return
-        if (!plugin.portalManager.getActivePortals().isEmpty()) {
-            System.out.println("rightclick? " + event.getAction().equals(Action.RIGHT_CLICK_BLOCK));
-            if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                for (Map.Entry<String, Portal> entry : plugin.portalManager.getActivePortals().entrySet()) {
-                    String name = entry.getKey();
-                    Portal portal = entry.getValue();
+        if (event.getPlayer().getItemInHand().getItemMeta() == null) return;
+        // If the item is a PortalKey
+        Player player = event.getPlayer();
+        PersistentDataContainer container = player.getItemInHand().getItemMeta().getPersistentDataContainer();
+        if (container.has(plugin.portalManager.keyFor, PersistentDataType.STRING)) {
+            // Cancel all interactions with this "PortalKey"
+            event.setCancelled(true);
+            if (!plugin.portalManager.getActivePortals().isEmpty()) {
+                System.out.println("rightclick? " + event.getAction().equals(Action.RIGHT_CLICK_BLOCK));
+                if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                    Portal portal = plugin.portalManager.getPortal(container.get(plugin.portalManager.keyFor, PersistentDataType.STRING));
+                    if (portal == null) return;
                     Block clickedBlock = event.getClickedBlock();
-                    System.out.println("portalName: " + name);
                     if (clickedBlock != null) {
-                        System.out.println("---->isKeyBlock? " + clickedBlock.getLocation().equals(portal.getKeyBlockLocation()));
-                        if (clickedBlock.getLocation().equals(portal.getKeyBlockLocation()))
-                            event.setCancelled(true);
-//                            plugin.portalManager.openPortal(player, name);
+                        // Check if the location clicked is the KeyBlock for the portal
+                        if (Objects.equals(clickedBlock.getLocation(), portal.getKeyBlockLocation())) {
+                            player.getInventory().remove(Objects.requireNonNull(event.getItem()));
+                            plugin.messageUtils.send(player, plugin.messageUtils.format("&6You use a key on the activation block!"));
+                            plugin.portalManager.openPortal(player, portal);
+                        } else {
+                            plugin.messageUtils.send(player, plugin.respond.gatewayWrongKey());
+                        }
                     }
                 }
             }

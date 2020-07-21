@@ -72,10 +72,15 @@ public class SelectionHandler implements Listener {
     public void startSelection(Player player, final String[] args, final ItemStack keyItem) {
         int cancellationTime = 60;
         String passedName = "gateway_" + args[1];
+        // Create new Portal object
         Portal portal = new Portal(passedName, player.getWorld());
-        portal.setTempKeyItem(keyItem);
+        // Create new PortalKey
+        portal.setPortalKey(plugin.portalManager.createKey(portal, player.getItemInHand()));
+        // Set the Portal DisplayName
         portal.setCustomName(args[2]);
+        // Add player & portal to creaitionMap
         creationMap.put(player.getUniqueId(), portal);
+        // Give player the selection too & state creation process
         giveSelectionTool(player);
         plugin.messageUtils.send(player, plugin.messageUtils.format("&7Please select pos1"));
         // Put time-limit on portal creation
@@ -84,7 +89,7 @@ public class SelectionHandler implements Listener {
             public void run() {
                 if (player.getInventory().contains(selectionTool)) {
                     cancelCreation(player);
-                    // Send failed message
+                    // Send timeout message
                     plugin.messageUtils.send(player, plugin.respond.gatewayCreationTimeout());
                 }
             }
@@ -98,7 +103,6 @@ public class SelectionHandler implements Listener {
         // Remove player from creation maps
         creationMap.remove(player.getUniqueId());
         creationTasks.remove(player.getUniqueId());
-
     }
 
     public void takeSelectionTool(Player player) {

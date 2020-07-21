@@ -73,7 +73,6 @@ public class Responses {
         return plugin.messageUtils.getFormattedMessage("gateway-deletion");
     }
 
-
     public TextComponent listGateways() {
         TextComponent message = new TextComponent();
         message.addExtra(plugin.messageUtils.colorize("&9----- &bGateways &9-----") + NL);
@@ -82,6 +81,9 @@ public class Responses {
             message.addExtra(plugin.messageUtils.colorize("&7 -> Portal Name: &b" + portal.getPortalName()) + NL);
             message.addExtra(plugin.messageUtils.colorize("&7 -> Custom Name: &f" + portal.getCustomName()) + NL);
             message.addExtra(plugin.messageUtils.colorize("&7 -> World: &6" + portal.getWorld().getName()) + NL);
+            message.addExtra(plugin.messageUtils.colorize("&7 -> PortalKey:" + NL +
+                    "&7     -> name=" + portal.getPortalKey().getKeyMeta().getDisplayName() + NL +
+                    "&7     -> lore=" + portal.getPortalKey().getKeyMeta().getLore()) + NL);
             message.addExtra(plugin.messageUtils.colorize("&7 -> KeyBlock:&d" +
                     " x=" + portal.getKeyBlockLocation().getBlockX() +
                     ", y=" + portal.getKeyBlockLocation().getBlockY() +

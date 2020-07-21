@@ -1,12 +1,16 @@
 package me.endergamingfilms.gateways.integrations;
 
+import me.arcaniax.hdb.api.DatabaseLoadEvent;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.endergamingfilms.gateways.Gateways;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class HeadDatabaseHook {
+public class HeadDatabaseHook implements Listener {
     // TODO
     private final Gateways plugin;
     public HeadDatabaseAPI hdb;
@@ -17,14 +21,22 @@ public class HeadDatabaseHook {
 
     public void setup() {
         hdb = new HeadDatabaseAPI();
+        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    public ItemStack parseHead(String headID) {
-        ItemStack head = null;
+    public String getHeadID(ItemStack item) {
+        String returned = "";
         try {
-            head = hdb.getItemHead(headID);
-        } catch (NullPointerException ignored) {
+            returned = hdb.getItemID(item);
+        } catch (NullPointerException ignore) {
+
         }
-        return head != null ? head : new ItemStack(Material.STONE);
+        return returned;
+    }
+
+    @EventHandler
+    void onDatabaseLoad(DatabaseLoadEvent event) {
+        // Load Gateways
+        plugin.fileManager.readGateways();
     }
 }

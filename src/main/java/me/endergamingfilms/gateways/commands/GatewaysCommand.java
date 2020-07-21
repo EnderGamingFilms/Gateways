@@ -37,26 +37,27 @@ public class GatewaysCommand extends BaseCommand {
         } else if (args[0].equalsIgnoreCase("create")) {
             plugin.cmdManager.createCmd.run(player, args);
         } else if (args[0].equalsIgnoreCase("test")) { // --------- Test Command --------- \\
-            if (args.length > 2) {
-                if (args[1].equalsIgnoreCase("getkey")) {
-                    PortalKey portalKey = plugin.portalManager.getKey(plugin.portalManager.
-                            getPortal("gateway_" + args[2]));
-                    System.out.println();
+//            if (args.length == 3) {
+//                if (args[1].equalsIgnoreCase("getkey")) {
+                    String fullPortalName = "gateway_" + args[1];
+                    System.out.println("---->passedName: " + fullPortalName);
+                    System.out.println("---->portalIsActive: " + plugin.portalManager.getActivePortals().containsKey(fullPortalName));
+                    if (!plugin.portalManager.getActivePortals().containsKey(fullPortalName)) return false;
+                    PortalKey portalKey = plugin.portalManager.getPortal(fullPortalName).getPortalKey();
+                    System.out.println("---->portalKey: " + portalKey);
                     if (portalKey == null) return false;
                     player.getInventory().addItem(portalKey.getKeyItem());
-                } else if (args[1].equalsIgnoreCase("savekeys")) {
-                    plugin.fileManager.saveKeys();
-                }
-//                try {
-//                    ItemStack item = plugin.hdbHook.hdb.getItemHead(args[1]);
-//                    plugin.messageUtils.send(player, "ParsedInput = " + item.getItemMeta().getDisplayName());
-//                } catch (NullPointerException n) {
-//                    System.out.println("---->ItemID = null");
+//                } else if (args[1].equalsIgnoreCase("head")) {
+//                    player.getInventory().addItem(plugin.hdbHook.hdb.getItemHead(args[2]));
 //                }
-            } else {
-                plugin.messageUtils.send(player, "ItemID = " + plugin.hdbHook.hdb.getItemID(player.getItemInHand()));
-            }
-        } else if (args[0].matches("rm|remove")) {
+//            } else if (args.length == 2) {
+//                if (args[1].equalsIgnoreCase("save")) {
+//                    plugin.fileManager.saveGateways();
+//                }
+//            } else {
+//                plugin.messageUtils.send(player, "ItemID = " + plugin.hdbHook.hdb.getItemID(player.getItemInHand()));
+//            }
+        } else if (args[0].matches("rm|rem|remove")) {
             plugin.cmdManager.deleteCmd.run(player, args);
         } else if (args[0].equalsIgnoreCase("list")) {
             if (!player.hasPermission("gateways.command.list")) {

@@ -49,15 +49,15 @@ public final class Gateways extends JavaPlugin {
         portalManager = new PortalManager(this);
 
         // Setup Gateways
-        fileManager.readGateways();
-        fileManager.readKeys();
+        if (!Bukkit.getPluginManager().isPluginEnabled("HeadDatabase")){
+            fileManager.readGateways();
+        }
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
         fileManager.saveGateways();
-        fileManager.saveKeys();
         HandlerList.unregisterAll(this);
     }
 

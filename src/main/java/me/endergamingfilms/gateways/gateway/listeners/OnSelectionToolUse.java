@@ -36,9 +36,7 @@ public class OnSelectionToolUse implements Listener {
         // Only Check Right Hand (main hand)
         PersistentDataContainer container = player.getItemInHand().getItemMeta().getPersistentDataContainer();
         // Check if held item is the selectionTool
-        if (Objects.equals(container.get(plugin.portalManager.selectionHandler.key, PersistentDataType.STRING),
-                Objects.requireNonNull(plugin.portalManager.selectionHandler.getSelectionTool().getItemMeta())
-                        .getPersistentDataContainer().get(plugin.portalManager.selectionHandler.key, PersistentDataType.STRING))) {
+        if (container.has(plugin.portalManager.selectionHandler.key, PersistentDataType.STRING)) {
             // Always cancel the event for the selection tool
             event.setCancelled(true);
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
