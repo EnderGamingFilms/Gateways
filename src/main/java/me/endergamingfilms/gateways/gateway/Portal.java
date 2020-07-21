@@ -4,6 +4,7 @@ import com.Zrips.CMI.Modules.Portals.CMIPortal;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 
 public class Portal {
     private World world;
@@ -15,6 +16,7 @@ public class Portal {
     private boolean isOpen;
     private CMIPortal cmiPortal;
     private String customName;
+    private ItemStack tempKeyItem;
 
     public Portal(final String portalName, World world) {
         this.isOpen = false;
@@ -93,5 +95,13 @@ public class Portal {
     public boolean isComplete() {
         if (pos1 == null || pos2 == null || keyBlock == null || destination == null) return false;
         return true;
+    }
+
+    public void setTempKeyItem(ItemStack keyItem) {
+        this.tempKeyItem = keyItem;
+    }
+
+    public ItemStack getTempKeyItem() {
+        return this.tempKeyItem;
     }
 }

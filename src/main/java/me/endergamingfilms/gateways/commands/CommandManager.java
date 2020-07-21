@@ -20,7 +20,7 @@ public class CommandManager {
 
     public void registerCommands() {
         // Make Commands Accessible
-        commandList.add(gatewaysCmd = new GatewaysCommand("gateways", plugin));
+        commandList.add(gatewaysCmd = new GatewaysCommand("gateways", plugin, "gate", "gw"));
 
         // Register Sub-Commands "/market command"
         reloadCmd = new ReloadCommand(plugin);

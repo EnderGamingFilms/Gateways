@@ -2,7 +2,8 @@ package me.endergamingfilms.gateways;
 
 import me.endergamingfilms.gateways.commands.CommandManager;
 import me.endergamingfilms.gateways.gateway.PortalManager;
-import me.endergamingfilms.gateways.integrations.cmiHook;
+import me.endergamingfilms.gateways.integrations.CMIHook;
+import me.endergamingfilms.gateways.integrations.HeadDatabaseHook;
 import me.endergamingfilms.gateways.utils.FileManager;
 import me.endergamingfilms.gateways.utils.HookPlaceholderAPI;
 import me.endergamingfilms.gateways.utils.MessageUtils;
@@ -16,7 +17,8 @@ public final class Gateways extends JavaPlugin {
     public final MessageUtils messageUtils = new MessageUtils(this);
     public final Responses respond = new Responses(this);
     public final CommandManager cmdManager = new CommandManager(this);
-    public final cmiHook cmiHook = new cmiHook(this);
+    public final CMIHook cmiHook = new CMIHook(this);
+    public HeadDatabaseHook hdbHook = new HeadDatabaseHook(this);
     public PortalManager portalManager;
 
     @Override
@@ -31,15 +33,16 @@ public final class Gateways extends JavaPlugin {
 
         // Register PlaceHolderAPI hook
         messageUtils.log(MessageUtils.LogLevel.INFO, "&9Loading plugin hooks.");
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && Bukkit.getPluginManager().isPluginEnabled("CMI")) {
-            // Hook into PAPI
-            new HookPlaceholderAPI(this).register();
-            // Hook into CMI
-            cmiHook.setup();
-            messageUtils.log(MessageUtils.LogLevel.INFO, "&9Plugin hooks successfully loaded.");
-        } else {
-            messageUtils.log(MessageUtils.LogLevel.WARNING, "&9Unable to load hooks.");
-        }
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new HookPlaceholderAPI(this).register(); // Hook into PAPI
+        } else messageUtils.log(MessageUtils.LogLevel.WARNING, "&9Unable to load PAPI hook.");
+        if (Bukkit.getPluginManager().isPluginEnabled("CMI")) {
+            cmiHook.setup(); // Hook into CMI
+        } else messageUtils.log(MessageUtils.LogLevel.WARNING, "&9Unable to load CMI hook.");
+        if (Bukkit.getPluginManager().isPluginEnabled("HeadDatabase")) {
+            hdbHook.setup(); // Hook into
+        } else messageUtils.log(MessageUtils.LogLevel.WARNING, "&9Unable to load HeadDatabase]hook.");
+        messageUtils.log(MessageUtils.LogLevel.INFO, "&9Plugin hooks finished loading.");
 
         // Register Listeners/Managers
         messageUtils.log(MessageUtils.LogLevel.INFO, "&9Loading in gateways.");
@@ -47,12 +50,14 @@ public final class Gateways extends JavaPlugin {
 
         // Setup Gateways
         fileManager.readGateways();
+        fileManager.readKeys();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
         fileManager.saveGateways();
+        fileManager.saveKeys();
         HandlerList.unregisterAll(this);
     }
 

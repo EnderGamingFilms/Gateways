@@ -3,7 +3,14 @@ package me.endergamingfilms.gateways.gateway;
 import me.endergamingfilms.gateways.Gateways;
 import me.endergamingfilms.gateways.gateway.listeners.OnKeyBlockClick;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -14,10 +21,12 @@ public class PortalManager {
     private final Map<String, Portal> activePortals = new HashMap<>();
     private final Map<String, PortalKey> portalKeys = new HashMap<>();
     public final SelectionHandler selectionHandler;
+    public final NamespacedKey isPortalKey;
 
     public PortalManager(@NotNull final Gateways instance) {
         this.plugin = instance;
         this.selectionHandler = new SelectionHandler(instance);
+        this.isPortalKey = new NamespacedKey(instance, "isPortalKey");
         instance.getServer().getPluginManager().registerEvents(new OnKeyBlockClick(instance), instance);
     }
 
@@ -29,8 +38,8 @@ public class PortalManager {
         return this.activePortals;
     }
 
-    public void addPortalKey(String portalName, PortalKey key) {
-        this.portalKeys.put(portalName, key);
+    public void addPortalKey(PortalKey key) {
+        this.portalKeys.put(key.getPortal().getPortalName(), key);
     }
 
     public Map<String, PortalKey> getPortalKeys() {
@@ -55,7 +64,7 @@ public class PortalManager {
             }
         }
         // Start portal creation process
-        selectionHandler.startSelection(player, args);
+        selectionHandler.startSelection(player, args, player.getItemInHand());
     }
 
     public void openPortal(Player player, String portalName) {
@@ -108,6 +117,60 @@ public class PortalManager {
     }
 
     public Portal getPortal(String str) {
-        return activePortals.get(str);
+        System.out.println("-->containsPortal? " + activePortals.containsKey(str));
+        return this.activePortals.get(str);
+    }
+
+    public PortalKey getKey(Portal portal) {
+        System.out.println("-->containsKey? " + portalKeys.containsKey(portal.getPortalName()));
+        return this.portalKeys.get(portal.getPortalName());
+    }
+
+    public PortalKey createKey(Portal portal, ItemStack item) {
+        System.out.println("---->passItem: " + item.toString());
+        System.out.println("---->Portal: " + portal.getPortalName());
+        // Create portal key
+        PortalKey portalKey = new PortalKey();
+        portalKey.setPortal(portal);
+        ItemStack newItem = new ItemStack(item);
+        ItemMeta itemMeta = newItem.getItemMeta();
+
+        itemMeta.getPersistentDataContainer().set(isPortalKey, PersistentDataType.STRING, "true");
+        itemMeta.setUnbreakable(true);
+        itemMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
+
+        portalKey.setKeyItem(newItem);
+        portalKey.setKeyMeta(itemMeta);
+
+        portalKey.update();
+
+        System.out.println("---->KeyPortal(in create): " + portalKey.getPortal().getPortalName());
+        System.out.println("---->KeyItem(in create): " + portalKey.getKeyItem().toString());
+        System.out.println("---->KeyMeta(in create): " + portalKey.getKeyMeta().toString());
+        // Add key to the map
+        addPortalKey(portalKey);
+
+        System.out.println("---->inKeyChain? " + portalKeys.containsKey(portal.getPortalName()));
+        return portalKey;
+    }
+
+    public void createPortal(Player player) {
+        Portal temp = plugin.portalManager.selectionHandler.getCreationMap().get(player.getUniqueId());
+        // Take selection tool
+        selectionHandler.takeSelectionTool(player);
+        // Remove blocks at pos1 & pos2
+        temp.getPos1().getBlock().setType(Material.AIR);
+        temp.getPos2().getBlock().setType(Material.AIR);
+        // Add newly created portal
+        addPortal(temp);
+        plugin.cmiHook.createCMIPortal(temp);
+        // Remove player from creation maps
+        selectionHandler.getCreationMap().remove(player.getUniqueId());
+        selectionHandler.getCreationTasks().remove(player.getUniqueId());
+        // Create key for portal - Will need more config done in file
+        createKey(temp, temp.getTempKeyItem());
+        // Send success message
+        plugin.messageUtils.send(player, plugin.messageUtils.format("&7Portal has been created!"));
     }
 }

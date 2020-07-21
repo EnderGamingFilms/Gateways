@@ -78,20 +78,7 @@ public class OnSelectionToolUse implements Listener {
             }
             // Check if portal is complete take tool
             if (plugin.portalManager.selectionHandler.getCreationMap().get(player.getUniqueId()).isComplete()) {
-                Portal temp = plugin.portalManager.selectionHandler.getCreationMap().get(player.getUniqueId());
-                // Take selection tool
-                plugin.portalManager.selectionHandler.takeSelectionTool(player);
-                // Remove blocks at pos1 & pos2
-                temp.getPos1().getBlock().setType(Material.AIR);
-                temp.getPos2().getBlock().setType(Material.AIR);
-                // Add newly created portal
-                plugin.portalManager.addPortal(temp);
-                plugin.cmiHook.createCMIPortal(temp);
-                // Remove player from creation maps
-                plugin.portalManager.selectionHandler.getCreationMap().remove(player.getUniqueId());
-                plugin.portalManager.selectionHandler.getCreationTasks().remove(player.getUniqueId());
-                // Send success message
-                plugin.messageUtils.send(player, plugin.messageUtils.format("&7Portal has been created!"));
+                plugin.portalManager.createPortal(event.getPlayer());
             }
         }
     }

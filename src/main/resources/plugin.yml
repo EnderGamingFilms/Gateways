@@ -4,7 +4,7 @@ main: me.endergamingfilms.gateways.Gateways
 api-version: 1.15
 author: EnderGamingFilms
 description: Use custom keys to open portal gateways
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, HeadDatabase]
 depend: [CMI]
 permissions:
   gateways.reload:

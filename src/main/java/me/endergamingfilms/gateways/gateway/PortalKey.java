@@ -31,4 +31,8 @@ public class PortalKey {
     public void setKeyMeta(ItemMeta keyMeta) {
         this.keyMeta = keyMeta;
     }
+
+    public void update() {
+        this.keyItem.setItemMeta(keyMeta);
+    }
 }

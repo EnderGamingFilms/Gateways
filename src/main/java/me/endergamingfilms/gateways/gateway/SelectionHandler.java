@@ -69,10 +69,11 @@ public class SelectionHandler implements Listener {
         player.getInventory().addItem(selectionTool);
     }
 
-    public void startSelection(Player player, final String[] args) {
+    public void startSelection(Player player, final String[] args, final ItemStack keyItem) {
         int cancellationTime = 60;
         String passedName = "gateway_" + args[1];
         Portal portal = new Portal(passedName, player.getWorld());
+        portal.setTempKeyItem(keyItem);
         portal.setCustomName(args[2]);
         creationMap.put(player.getUniqueId(), portal);
         giveSelectionTool(player);

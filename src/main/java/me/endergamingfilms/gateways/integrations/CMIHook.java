@@ -8,12 +8,12 @@ import me.endergamingfilms.gateways.Gateways;
 import me.endergamingfilms.gateways.gateway.Portal;
 import org.jetbrains.annotations.NotNull;
 
-public class cmiHook {
+public class CMIHook {
     private final Gateways plugin;
     public CMI cmiInstance;
     public PortalManager portalModule;
 
-    public cmiHook(@NotNull final Gateways instance) {
+    public CMIHook(@NotNull final Gateways instance) {
         this.plugin = instance;
     }
 

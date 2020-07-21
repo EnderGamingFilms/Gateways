@@ -6,7 +6,7 @@
 
     <groupId>me.endergamingfilms</groupId>
     <artifactId>Gateways</artifactId>
-    <version>3.1</version>
+    <version>3.4</version>
     <packaging>jar</packaging>
 
     <name>Gateways</name>
@@ -96,6 +96,13 @@
             <version>8.7.2.3</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/CMI.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.github.shynixn.headdatabase</groupId>
+            <artifactId>hdb-api</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/HeadDatabaseAPI.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

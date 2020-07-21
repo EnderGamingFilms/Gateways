@@ -1,16 +1,21 @@
 package me.endergamingfilms.gateways.commands;
 
 import me.endergamingfilms.gateways.Gateways;
+import me.endergamingfilms.gateways.gateway.PortalKey;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 public class GatewaysCommand extends BaseCommand {
     private final Gateways plugin;
 
-    public GatewaysCommand(String command, @NotNull final Gateways instance) {
-        super(command);
+    public GatewaysCommand(String command, @NotNull final Gateways instance, String... aliases) {
+        super(command, null, null, null, Arrays.asList(aliases));
         this.plugin = instance;
     }
 
@@ -31,6 +36,26 @@ public class GatewaysCommand extends BaseCommand {
             plugin.cmdManager.reloadCmd.run(player);
         } else if (args[0].equalsIgnoreCase("create")) {
             plugin.cmdManager.createCmd.run(player, args);
+        } else if (args[0].equalsIgnoreCase("test")) { // --------- Test Command --------- \\
+            if (args.length > 2) {
+                if (args[1].equalsIgnoreCase("getkey")) {
+                    PortalKey portalKey = plugin.portalManager.getKey(plugin.portalManager.
+                            getPortal("gateway_" + args[2]));
+                    System.out.println();
+                    if (portalKey == null) return false;
+                    player.getInventory().addItem(portalKey.getKeyItem());
+                } else if (args[1].equalsIgnoreCase("savekeys")) {
+                    plugin.fileManager.saveKeys();
+                }
+//                try {
+//                    ItemStack item = plugin.hdbHook.hdb.getItemHead(args[1]);
+//                    plugin.messageUtils.send(player, "ParsedInput = " + item.getItemMeta().getDisplayName());
+//                } catch (NullPointerException n) {
+//                    System.out.println("---->ItemID = null");
+//                }
+            } else {
+                plugin.messageUtils.send(player, "ItemID = " + plugin.hdbHook.hdb.getItemID(player.getItemInHand()));
+            }
         } else if (args[0].matches("rm|remove")) {
             plugin.cmdManager.deleteCmd.run(player, args);
         } else if (args[0].equalsIgnoreCase("list")) {
