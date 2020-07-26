@@ -14,7 +14,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Objects;
 
 public class OnKeyBlockClick implements Listener {
@@ -46,9 +45,13 @@ public class OnKeyBlockClick implements Listener {
                     if (clickedBlock != null) {
                         // Check if the location clicked is the KeyBlock for the portal
                         if (Objects.equals(clickedBlock.getLocation(), portal.getKeyBlockLocation())) {
-                            player.getInventory().remove(Objects.requireNonNull(event.getItem()));
-                            plugin.messageUtils.send(player, plugin.respond.gatewayKeyUsed());
-                            plugin.portalManager.openPortal(player, portal);
+                            if (!portal.isOpened()) {
+                                player.getInventory().remove(Objects.requireNonNull(event.getItem()));
+                                plugin.messageUtils.send(player, plugin.respond.gatewayKeyUsed());
+                                plugin.portalManager.openPortal(portal);
+                            } else {
+                                plugin.messageUtils.send(player, plugin.respond.gatewayAlreadyOpen());
+                            }
                         } else {
                             plugin.messageUtils.send(player, plugin.respond.gatewayWrongKey());
                         }

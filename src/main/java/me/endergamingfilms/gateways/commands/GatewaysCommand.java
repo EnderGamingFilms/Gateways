@@ -3,15 +3,15 @@ package me.endergamingfilms.gateways.commands;
 import me.endergamingfilms.gateways.Gateways;
 import me.endergamingfilms.gateways.gateway.Portal;
 import me.endergamingfilms.gateways.gateway.PortalKey;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class GatewaysCommand extends BaseCommand {
     private final Gateways plugin;

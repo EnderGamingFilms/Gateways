@@ -63,7 +63,7 @@ public class PortalManager {
         selectionHandler.startSelection(player, args, player.getItemInHand());
     }
 
-    public void openPortal(Player player, Portal portal) {
+    public void openPortal(Portal portal) {
         int onTime = Math.max(plugin.fileManager.defaultPortalOnTime, portal.getKeepAlive());
         // Set portal on time
         // TODO
@@ -90,8 +90,7 @@ public class PortalManager {
                     closePortal(portal.getPortalName());
                 }
             }, 20L * 60 * onTime);
-        } else
-            plugin.messageUtils.send(player, plugin.respond.gatewayAlreadyOpen());
+        }
     }
 
     public void closePortal(String portalName) {

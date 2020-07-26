@@ -34,12 +34,9 @@ public class CMIHook {
             cmiPortal.setTpLoc(portal.getDestination());
             cmiPortal.setWorld(portal.getWorld());
             // Set portal particles
-            System.out.println("---->Setting CMIPortal Particles");
             if (portal.getPortalParticles() != null) {
                 cmiPortal.setEffect(CMIEffectManager.CMIParticle.getCMIParticle(portal.getPortalParticles()));
-                System.out.println("--->getName: " + cmiPortal.getEffect().getName());
             } else {
-                System.out.println("--->getName: " + cmiPortal.getEffect().getName());
                 portal.setPortalParticles(cmiPortal.getEffect().getName());
             }
             // Portal is disabled by default
@@ -59,7 +56,6 @@ public class CMIHook {
         CMIEffectManager.CMIParticle particle = CMIEffectManager.CMIParticle.getCMIParticle(
                 portal.getPortalParticles() != null ? portal.getPortalParticles() : "reddust");
         portalModule.getByName(portal.getPortalName()).setEffect(particle);
-        System.out.println("---->particleAmount: " + portal.getParticleAmount());
         portalModule.getByName(portal.getPortalName()).setParticleAmount(portal.getParticleAmount() != 0 ? portal.getParticleAmount() : 20);
         portalModule.getByName(portal.getPortalName()).setEnabled(false);
         portal.setCmiPortal(portalModule.getByName(portal.getPortalName()));

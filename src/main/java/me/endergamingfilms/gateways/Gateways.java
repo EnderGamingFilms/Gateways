@@ -41,7 +41,7 @@ public final class Gateways extends JavaPlugin {
         } else messageUtils.log(MessageUtils.LogLevel.WARNING, "&9Unable to load CMI hook.");
         if (Bukkit.getPluginManager().isPluginEnabled("HeadDatabase")) {
             hdbHook.setup(); // Hook into
-        } else messageUtils.log(MessageUtils.LogLevel.WARNING, "&9Unable to load HeadDatabase]hook.");
+        } else messageUtils.log(MessageUtils.LogLevel.WARNING, "&9Unable to load HeadDatabaseHook.");
         messageUtils.log(MessageUtils.LogLevel.INFO, "&9Plugin hooks finished loading.");
 
         // Register Listeners/Managers

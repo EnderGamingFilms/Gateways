@@ -1,9 +1,6 @@
 package me.endergamingfilms.gateways.commands;
 
 import me.endergamingfilms.gateways.Gateways;
-import me.endergamingfilms.gateways.gateway.listeners.OnKeyBlockClick;
-import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
